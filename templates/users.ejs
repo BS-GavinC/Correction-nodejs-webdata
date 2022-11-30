@@ -1,0 +1,11 @@
+<%- include('./partials/_header') %>
+
+<h1>Users</h1>
+<ul>
+    <% for(user of users) { %>
+
+        <%- include('./partials/_ficheuser', {user : user}) %>
+        
+    <% } %>
+</ul>
+<%- include('./partials/_footer') %>

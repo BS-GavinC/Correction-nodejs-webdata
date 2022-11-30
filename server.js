@@ -1,9 +1,8 @@
-
+const path = require('path')
 const http = require('http');
-const { getMaxListeners } = require('process');
 const url = require('url');
 const { deleteUser, getAllUsers, getUserById, createUser, updateUser } = require('./modules/fakeDb');
-
+const ejs = require('ejs')
 
 
 const server = http.createServer((req, res) => {
@@ -68,6 +67,7 @@ const server = http.createServer((req, res) => {
                 badRequest()
             }
             break;
+        
         case '/delete':
             if (requestURL.query.id) {
                 if (deleteUser(requestURL.query.id)) {
@@ -84,6 +84,48 @@ const server = http.createServer((req, res) => {
             }
         break;
     
+        case '/showusers' :
+
+            const fileDir = path.resolve('./', 'templates', 'users.ejs')
+
+            const usersList = getAllUsers()
+
+            ejs.renderFile(fileDir, {users : usersList}, (err, render) => {
+                res.writeHead(200),
+                res.end(render)
+            })
+
+            break;
+
+        case '/showuser' :
+
+            if (requestURL.query.id) {
+                const user = getUserById(requestURL.query.id)
+                if (user) {
+
+                    const fileDir = path.resolve('./', 'templates', 'user.ejs')
+
+                    ejs.renderFile(fileDir, {user : user}, (err, render) => {
+                        res.writeHead(200),
+                        res.end(render)
+                    })
+                    
+                }
+                else
+                {
+                    badRequest()
+                }
+                
+            }
+            else
+            {
+               badRequest() 
+            }
+            
+
+
+            break;
+
         default:
             notFound()
             break;
